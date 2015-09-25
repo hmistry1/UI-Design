@@ -4,15 +4,25 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.os.Handler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends Activity {
     // initializing variables
-    Button startButton, resetButton;
+    Button startButton, resetButton, lapButton;
     TextView time;
+    ListView lapRecords;
+    ArrayList<String> lapList;
+    ArrayAdapter<String> lapAdapter;
+
     long startTime = 0L;
     long timeInMilliseconds = 0L;
     long timeSwapBuff = 0L;
@@ -31,7 +41,14 @@ public class MainActivity extends Activity {
         // identifying widgets
         startButton = (Button) findViewById(R.id.start);
         resetButton = (Button) findViewById(R.id.reset);
+        lapButton = (Button) findViewById(R.id.lap);
         time = (TextView) findViewById(R.id.timeDisplay);
+        lapRecords = (ListView) findViewById(R.id.lapRecord);
+
+        lapList = new ArrayList<String>();
+        lapAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, lapList);
+
+        lapRecords.setAdapter(lapAdapter);
 
         // setting onClickListener for start button
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -45,7 +62,7 @@ public class MainActivity extends Activity {
                 } else {
                     startButton.setText("Start");
                     time.setTextColor(Color.BLUE);
-                    timeSwapBuff+=timeInMilliseconds;
+                    timeSwapBuff += timeInMilliseconds;
                     handler.removeCallbacks(updateTimer);
                     t = 1;
                 }
@@ -66,6 +83,14 @@ public class MainActivity extends Activity {
                 startButton.setText("Start");
                 handler.removeCallbacks(updateTimer);
                 time.setText("00:00:00");
+            }
+        });
+
+        lapButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String newLap = time.getText().toString();
+                lapList.add(newLap);
+                lapAdapter.notifyDataSetChanged();
             }
         });
     }
